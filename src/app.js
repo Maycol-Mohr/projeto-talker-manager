@@ -18,7 +18,6 @@ app.use(bodyParser.json());
 app.use(express.json());
 
 const HTTP_OK_STATUS = 200;
-// const PORT = '3000';
 
 const talkerPath = path.resolve(__dirname, './talker.json');
 
@@ -35,17 +34,11 @@ app.post('/login',
 validatePassword,
 validateEmail,
  (req, res) => {
-  // const { email, password } = req.body;
-  // // if ([email, password].includes(undefined)) {
-  // //   return res.status(401).json({ message: 'Campos ausentes!' });
-  // // }
-
   const token = generateToken();
 
   return res.status(200).json({ token });
 });
 
-// não remova esse endpoint, e para o avaliador funcionar - teste
 app.get('/', (_request, response) => {
   response.status(HTTP_OK_STATUS).send();
 });
@@ -61,16 +54,6 @@ if (q) {
 }
 return res.status(200).json(talker);
 });
-
-// app.get('/talker/search', validateToken, async (req, res) => {
-//   const { q } = req.query;
-//   const talkers = await findByQuery(q);
-//   res.status(200).json(talkers);
-// });
-
-// app.listen(PORT, () => {
-//   console.log('Online');
-// });
 
 app.get('/talker', async (req, res) => {
   try {
