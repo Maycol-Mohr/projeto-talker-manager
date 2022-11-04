@@ -125,4 +125,19 @@ res.status(200).json(talkers[index]);
   }
 });
 
+app.delete('/talker/:id',
+auth,
+ async (req, res) => {
+  try {
+    const { id } = req.params;
+    const talkers = await readFile();
+    const filteredTalkers = talkers.filter((talker) => talker.id !== Number(id));
+    const updatedTalkers = JSON.stringify(filteredTalkers, null, 2);
+    await fs.writeFile(talkerPath, updatedTalkers);
+res.status(204).end();
+  } catch (err) {
+    res.status(500).send({ message: err.message });
+  }
+});
+
 module.exports = app;
