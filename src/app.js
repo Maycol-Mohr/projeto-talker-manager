@@ -103,4 +103,26 @@ async (req, res) => {
   }
 });
 
+app.put('/talker/:id',
+auth,
+validateName,
+validateAge,
+validateTalk,
+validateWatchedAt,
+validateRate,
+ async (req, res) => {
+  try {
+    const { id } = req.params;
+    const { name, age, talk: { watchedAt, rate } } = req.body;
+    const talkers = await readFile();
+    const index = talkers.findIndex((element) => element.id === Number(id));
+    talkers[index] = { id: Number(id), name, age, talk: { watchedAt, rate } };
+    const updatedTalkers = JSON.stringify(talkers, null, 2);
+    await fs.writeFile(talkerPath, updatedTalkers);
+res.status(200).json(talkers[index]);
+  } catch (err) {
+    res.status(500).send({ message: err.message });
+  }
+});
+
 module.exports = app;
