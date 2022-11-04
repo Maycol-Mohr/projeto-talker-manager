@@ -50,6 +50,24 @@ app.get('/', (_request, response) => {
   response.status(HTTP_OK_STATUS).send();
 });
 
+app.get('/talker/search', auth,
+async (req, res) => {
+    const { q } = req.query;
+    const talker = await readFile();
+  
+if (q) {
+  const filteredTalkers = talker.filter((element) => element.name.includes(q));
+  return res.status(200).json(filteredTalkers);
+}
+return res.status(200).json(talker);
+});
+
+// app.get('/talker/search', validateToken, async (req, res) => {
+//   const { q } = req.query;
+//   const talkers = await findByQuery(q);
+//   res.status(200).json(talkers);
+// });
+
 // app.listen(PORT, () => {
 //   console.log('Online');
 // });
