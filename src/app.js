@@ -5,6 +5,12 @@ const path = require('path');
 const generateToken = require('../utils/generateToken');
 const validatePassword = require('../middlewares/validatePassword');
 const validateEmail = require('../middlewares/validateEmail');
+const auth = require('../middlewares/auth');
+const validateName = require('../middlewares/validateName');
+const validateAge = require('../middlewares/validateAge');
+const validateTalk = require('../middlewares/validateTalk');
+const validateWatchedAt = require('../middlewares/validateWatchedAt');
+const validateRate = require('../middlewares/validateRate');
 
 const app = express();
 app.use(bodyParser.json());
@@ -67,6 +73,33 @@ app.get('/talker/:id', async (req, res) => {
     return res.status(200).json(talker);
   } catch (err) {
     return res.status(500).json(err.message);
+  }
+});
+
+app.post('/talker',
+auth,
+validateName,
+validateAge,
+validateTalk,
+validateWatchedAt,
+validateRate,
+async (req, res) => {
+  try {
+    const talkers = await readFile();
+    const { name, age, talk: { watchedAt, rate } } = req.body;
+    const newTalker = {
+      // acessamos a chave id do ultimo objeto do array de maneira dinâmica e incrementamos + 1 em seu valor
+      id: talkers[talkers.length - 1].id + 1,
+      name,
+      age,
+      talk: { watchedAt,
+      rate },
+    };
+    const allTalkers = JSON.stringify([...talkers, newTalker]);
+    await fs.writeFile(talkerPath, allTalkers);
+   res.status(201).json(newTalker);
+  } catch (err) {
+    res.status(500).send({ message: err.message });
   }
 });
 
