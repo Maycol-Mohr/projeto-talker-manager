@@ -40,4 +40,17 @@ app.get('/talker', async (req, res) => {
   }
 });
 
+app.get('/talker/:id', async (req, res) => {
+  try {
+    const talkers = await readFile();
+    const talker = talkers.find(({ id }) => id === Number(req.params.id));
+    if (talker === undefined) {
+      return res.status(404).json({ message: 'Pessoa palestrante não encontrada' });
+    }
+    return res.status(200).json(talker);
+  } catch (err) {
+    return res.status(500).json(err.message);
+  }
+});
+
 module.exports = app;
