@@ -3,6 +3,8 @@ const bodyParser = require('body-parser');
 const fs = require('fs').promises;
 const path = require('path');
 const generateToken = require('../utils/generateToken');
+const validatePassword = require('../middlewares/validatePassword');
+const validateEmail = require('../middlewares/validateEmail');
 
 const app = express();
 app.use(bodyParser.json());
@@ -23,12 +25,14 @@ const readFile = async () => {
   }
 };
 
-app.post('/login', (req, res) => {
-  const { email, password } = req.body;
-
-  if ([email, password].includes(undefined)) {
-    return res.status(401).json({ message: 'Campos ausentes!' });
-  }
+app.post('/login',
+validatePassword,
+validateEmail,
+ (req, res) => {
+  // const { email, password } = req.body;
+  // // if ([email, password].includes(undefined)) {
+  // //   return res.status(401).json({ message: 'Campos ausentes!' });
+  // // }
 
   const token = generateToken();
 
