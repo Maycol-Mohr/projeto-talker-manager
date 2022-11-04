@@ -2,6 +2,7 @@ const express = require('express');
 const bodyParser = require('body-parser');
 const fs = require('fs').promises;
 const path = require('path');
+const generateToken = require('../utils/generateToken');
 
 const app = express();
 app.use(bodyParser.json());
@@ -21,6 +22,18 @@ const readFile = async () => {
     console.error(`Erro ao ler o arquivo: ${err.message}`);
   }
 };
+
+app.post('/login', (req, res) => {
+  const { email, password } = req.body;
+
+  if ([email, password].includes(undefined)) {
+    return res.status(401).json({ message: 'Campos ausentes!' });
+  }
+
+  const token = generateToken();
+
+  return res.status(200).json({ token });
+});
 
 // não remova esse endpoint, e para o avaliador funcionar - teste
 app.get('/', (_request, response) => {
