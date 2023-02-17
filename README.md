@@ -1,4 +1,6 @@
-# :construction: README customizado em construção ! :construction:
+# Projeto Talker Manager
+
+Neste projeto, praticamos os ensinamentos aprendidos neste bloco sobre a Introdução ao desenvolvimento Web com NodeJS.
 <!-- Olá, Tryber!
 Esse é apenas um arquivo inicial para o README do seu projeto no qual você pode customizar e reutilizar todas as vezes que for executar o trybe-publisher.
 
