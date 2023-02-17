@@ -30,12 +30,8 @@ const readFile = async () => {
   }
 };
 
-app.post('/login',
-validatePassword,
-validateEmail,
- (req, res) => {
+app.post('/login', validatePassword, validateEmail, (req, res) => {
   const token = generateToken();
-
   return res.status(200).json({ token });
 });
 
@@ -43,16 +39,18 @@ app.get('/', (_request, response) => {
   response.status(HTTP_OK_STATUS).send();
 });
 
-app.get('/talker/search', auth,
-async (req, res) => {
+app.get('/talker/search', auth, async (req, res) => {
+  try {
     const { q } = req.query;
-    const talker = await readFile();
-  
-if (q) {
-  const filteredTalkers = talker.filter((element) => element.name.includes(q));
-  return res.status(200).json(filteredTalkers);
-}
-return res.status(200).json(talker);
+    const talkers = await readFile();
+  if (q) {
+    const filteredTalkers = talkers.filter((element) => element.name.includes(q));
+    return res.status(200).json(filteredTalkers);
+  }
+    return res.status(200).json(talkers);
+  } catch (err) {
+    res.status(500).send({ message: err.message });
+  }
 });
 
 app.get('/talker', async (req, res) => {
@@ -68,9 +66,10 @@ app.get('/talker/:id', async (req, res) => {
   try {
     const talkers = await readFile();
     const talker = talkers.find(({ id }) => id === Number(req.params.id));
-    if (talker === undefined) {
-      return res.status(404).json({ message: 'Pessoa palestrante não encontrada' });
-    }
+  if (talker === undefined) {
+    // if (!talker) {
+    return res.status(404).json({ message: 'Pessoa palestrante não encontrada' });
+    } 
     return res.status(200).json(talker);
   } catch (err) {
     return res.status(500).json(err.message);
@@ -120,22 +119,21 @@ validateRate,
     talkers[index] = { id: Number(id), name, age, talk: { watchedAt, rate } };
     const updatedTalkers = JSON.stringify(talkers, null, 2);
     await fs.writeFile(talkerPath, updatedTalkers);
-res.status(200).json(talkers[index]);
+    res.status(200).json(talkers[index]);
   } catch (err) {
     res.status(500).send({ message: err.message });
   }
 });
 
-app.delete('/talker/:id',
-auth,
- async (req, res) => {
+app.delete('/talker/:id', auth, async (req, res) => {
   try {
     const { id } = req.params;
     const talkers = await readFile();
     const filteredTalkers = talkers.filter((talker) => talker.id !== Number(id));
     const updatedTalkers = JSON.stringify(filteredTalkers, null, 2);
+    console.log(updatedTalkers);
     await fs.writeFile(talkerPath, updatedTalkers);
-res.status(204).end();
+    res.status(204).end();
   } catch (err) {
     res.status(500).send({ message: err.message });
   }
